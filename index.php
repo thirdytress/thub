@@ -1,59 +1,28 @@
 <?php
 session_start();
-include "classes/db.php";
-$database = new Database();
-$conn = $database->connect();
-
-$error = "";
-
-if($_SERVER['REQUEST_METHOD'] == "POST") {
-    $role = $_POST['role']; // tenant or admin
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    if($role == "tenant") {
-        $tenant = $database->loginTenant($email, $password);
-        if($tenant) {
-            $_SESSION['tenant'] = $tenant;
-            header("Location: tenant_dashboard.php");
-            exit();
-        } else {
-            $error = "Invalid tenant login!";
-        }
-    } elseif($role == "admin") {
-        $admin = $database->loginAdmin($email, $password);
-        if($admin) {
-            $_SESSION['admin'] = $admin;
-            header("Location: ad_dashboard.php");
-            exit();
-        } else {
-            $error = "Invalid admin login!";
-        }
-    }
-}
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-    <title>Apartment Hub</title>
+  <meta charset="utf-8">
+  <title>Apartment Hub</title>
+  <style>body{font-family:Arial,Helvetica,sans-serif;max-width:900px;margin:30px auto;padding:10px}</style>
 </head>
 <body>
-    <h1>Welcome to Apartment Hub</h1>
-    <p>Please login below:</p>
+  <h1>Apartment Hub</h1>
 
-    <?php if(!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
+  <?php if(isset($_SESSION['tenant'])): ?>
+    <p>Hello, <?php echo htmlspecialchars($_SESSION['tenant']['FirstName']); ?> —
+      <a href="tenant_dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a></p>
+  <?php elseif(isset($_SESSION['owner'])): ?>
+    <p>Hello Owner, <?php echo htmlspecialchars($_SESSION['owner']['FirstName']); ?> —
+      <a href="owner_dashboard.php">Owner Dashboard</a> | <a href="logout.php">Logout</a></p>
+  <?php else: ?>
+    <p><a href="register.php">Tenant Register</a> | <a href="login.php">Tenant Login</a> | <a href="owner_login.php">Owner Login</a></p>
+  <?php endif; ?>
 
-    <form method="POST">
-        <select name="role" required>
-            <option value="tenant">Tenant</option>
-            <option value="admin">Admin</option>
-        </select><br><br>
-        <input type="email" name="email" placeholder="Email" required><br><br>
-        <input type="password" name="password" placeholder="Password" required><br><br>
-        <button type="submit">Login</button>
-    </form>
-
-    <br>
-    <a href="register.php">Register as Tenant</a>
+  <hr>
+  <h3>About</h3>
+  <p>Sample apartment management demo. Configure DB in <code>classes/database.php</code> and import your schema.</p>
 </body>
 </html>

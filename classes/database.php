@@ -19,48 +19,56 @@ class Database {
 
     // TENANT FUNCTIONS
     public function registerTenant($fname, $lname, $email, $phone, $password) {
-        $sql = "INSERT INTO Tenants (FirstName, LastName, Email, PhoneNumber, TenantPass) VALUES (:fname, :lname, :email, :phone, :password)";
-        $stmt = $this->connect()->prepare($sql);
-        $stmt->bindParam(":fname", $fname);
-        $stmt->bindParam(":lname", $lname);
-        $stmt->bindParam(":email", $email);
-        $stmt->bindParam(":phone", $phone);
-        $stmt->bindParam(":password", password_hash($password, PASSWORD_DEFAULT));
-        return $stmt->execute();
-    }
+    $sql = "INSERT INTO Tenants (FirstName, LastName, Email, PhoneNumber, TenantPass) 
+            VALUES (:fname, :lname, :email, :phone, :password)";
+    $stmt = $this->connect()->prepare($sql);
 
-    public function loginTenant($email, $password) {
+    $hashed = password_hash($password, PASSWORD_DEFAULT); // ✅ gawing variable muna
+
+    $stmt->bindParam(":fname", $fname);
+    $stmt->bindParam(":lname", $lname);
+    $stmt->bindParam(":email", $email);
+    $stmt->bindParam(":phone", $phone);
+    $stmt->bindParam(":password", $hashed);
+    return $stmt->execute();
+}
+
+
+    public function loginUser($role, $email, $password) {
+    if ($role === "tenant") {
         $sql = "SELECT * FROM Tenants WHERE Email = :email";
-        $stmt = $this->connect()->prepare($sql);
-        $stmt->bindParam(":email", $email);
-        $stmt->execute();
-        $tenant = $stmt->fetch(PDO::FETCH_ASSOC);
-        if($tenant && password_verify($password, $tenant['TenantPass'])) {
-            return $tenant;
-        }
-        return false;
+        $passField = "TenantPass";
+    } else {
+        $sql = "SELECT * FROM Owner WHERE Email = :email";
+        $passField = "OwnerPass";
     }
 
-    // OWNER FUNCTIONS
-    public function loginOwner($email, $password) {
-        $sql = "SELECT * FROM Owner WHERE Email = :email";
-        $stmt = $this->connect()->prepare($sql);
-        $stmt->bindParam(":email", $email);
-        $stmt->execute();
-        $owner = $stmt->fetch(PDO::FETCH_ASSOC);
-        if($owner && password_verify($password, $owner['OwnerPass'])) {
-            return $owner;
-        }
-        return false;
+    $stmt = $this->connect()->prepare($sql);
+    $stmt->bindParam(":email", $email);
+    $stmt->execute();
+
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($password, $user[$passField])) {
+        return $user; // successful login, return info
     }
+    return false; // failed login
+}
+
 
     // APARTMENTS
-    public function getApartments() {
-        $sql = "SELECT * FROM Apartments";
-        $stmt = $this->connect()->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    // GET ALL APARTMENTS
+public function getAllApartments() {
+    $sql = "SELECT a.ApartmentID, a.BuildingName, a.UnitNumber, a.RentAmount, a.Bedrooms, a.Bathrooms,
+                   a.Apt_Street, a.Apt_City, a.Apt_Prov, o.FirstName, o.LastName
+            FROM Apartments a
+            JOIN Owner o ON a.OwnerID = o.OwnerID
+            ORDER BY a.BuildingName ASC";
+    $stmt = $this->connect()->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
     public function addApartment($ownerID, $building, $rent, $bed, $bath, $unit, $street, $city, $prov) {
         $sql = "INSERT INTO Apartments (OwnerID, BuildingName, RentAmount, Bedrooms, Bathrooms, UnitNumber, Apt_Street, Apt_City, Apt_Prov) VALUES (:owner, :building, :rent, :bed, :bath, :unit, :street, :city, :prov)";

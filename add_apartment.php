@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 if (!isset($_SESSION['owner'])) { header('Location: owner_login.php'); exit; }
@@ -26,23 +27,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>Add Apartment</title></head>
-<body>
-  <h2>Add Apartment</h2>
-  <?php foreach($errors as $e) echo '<p style="color:red">'.htmlspecialchars($e).'</p>'; ?>
-  <?php if($success) echo '<p style="color:green">'.htmlspecialchars($success).'</p>'; ?>
-  <form method="post">
-    <label>Building Name<br><input name="building" required></label><br>
-    <label>Unit Number<br><input name="unit" required></label><br>
-    <label>Rent Amount<br><input name="rent" type="number" step="0.01"></label><br>
-    <label>Bedrooms<br><input name="bedrooms" type="number"></label><br>
-    <label>Bathrooms<br><input name="bathrooms" type="number"></label><br>
-    <label>Street<br><input name="street"></label><br>
-    <label>City<br><input name="city"></label><br>
-    <label>Province<br><input name="prov"></label><br>
-    <button type="submit">Add Apartment</button>
-  </form>
-  <p><a href="owner_dashboard.php">Back</a></p>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Add Apartment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Add Apartment</h4>
+          </div>
+          <div class="card-body">
+            
+            <!-- Error messages -->
+            <?php if($errors): ?>
+              <div class="alert alert-danger">
+                <?php foreach($errors as $e) echo '<div>'.htmlspecialchars($e).'</div>'; ?>
+              </div>
+            <?php endif; ?>
+
+            <!-- Success message -->
+            <?php if($success): ?>
+              <div class="alert alert-success">
+                <?= htmlspecialchars($success) ?>
+              </div>
+            <?php endif; ?>
+
+            <!-- Form -->
+            <form method="post">
+              <div class="mb-3">
+                <label class="form-label">Building Name</label>
+                <input type="text" name="building" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Unit Number</label>
+                <input type="text" name="unit" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Rent Amount</label>
+                <input type="number" step="0.01" name="rent" class="form-control">
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Bedrooms</label>
+                  <input type="number" name="bedrooms" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Bathrooms</label>
+                  <input type="number" name="bathrooms" class="form-control">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Street</label>
+                <input type="text" name="street" class="form-control">
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">City</label>
+                  <input type="text" name="city" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Province</label>
+                  <input type="text" name="prov" class="form-control">
+                </div>
+              </div>
+              <div class="d-flex justify-content-between">
+                <a href="owner_dashboard.php" class="btn btn-secondary">Back</a>
+                <button type="submit" class="btn btn-primary">Add Apartment</button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

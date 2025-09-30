@@ -3,56 +3,79 @@ session_start();
 if (!isset($_SESSION['owner'])) {
     header('Location: owner_login.php'); exit;
 }
-require 'classes/database.php';
-$db = new Database();
-$pdo = $db->connect();
 $owner = $_SESSION['owner'];
-$owner_id = $owner['OwnerID'] ?? $owner['owner_id'] ?? null;
-
-// apartments for this owner
-$stmt = $pdo->prepare("SELECT * FROM Apartments WHERE OwnerID = :oid");
-$stmt->execute([':oid' => $owner_id]);
-$apartments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// simple tenants list
-$stmt = $pdo->query("SELECT * FROM Tenants ORDER BY FirstName");
-$tenants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>Owner Dashboard</title></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Owner Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { overflow-x: hidden; }
+    #sidebar { min-height: 100vh; }
+    #sidebar .nav-link.active { background-color: #0d6efd; }
+    #content-area { padding: 20px; }
+  </style>
+</head>
 <body>
-  <h2>Owner Dashboard</h2>
-  <p>Welcome, <?php echo htmlspecialchars($owner['FirstName'] . ' ' . $owner['LastName']); ?> | <a href="logout.php">Logout</a></p>
 
-  <h3>Your Apartments</h3>
-  <p><a href="add_apartment.php">Add Apartment</a></p>
-  <?php if(!$apartments) echo '<p>No apartments yet.</p>'; else { ?>
-    <table border="1" cellpadding="6"><tr><th>Unit</th><th>Building</th><th>Rent</th></tr>
-    <?php foreach($apartments as $a): ?>
-      <tr>
-        <td><?php echo htmlspecialchars($a['UnitNumber']); ?></td>
-        <td><?php echo htmlspecialchars($a['BuildingName']); ?></td>
-        <td><?php echo htmlspecialchars($a['RentAmount']); ?></td>
-      </tr>
-    <?php endforeach; ?>
-    </table>
-  <?php } ?>
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Owner Dashboard</a>
+      <div class="d-flex text-white">
+        <span class="me-3">Welcome, <?php echo htmlspecialchars($owner['FirstName'].' '.$owner['LastName']); ?></span>
+        <a class="btn btn-outline-light btn-sm" href="logout.php">Logout</a>
+      </div>
+    </div>
+  </nav>
 
-  <h3>Tenants</h3>
-  <?php if(!$tenants) echo '<p>No tenants yet.</p>'; else { ?>
-    <table border="1" cellpadding="6"><tr><th>Name</th><th>Email</th><th>Phone</th></tr>
-    <?php foreach($tenants as $t): ?>
-      <tr>
-        <td><?php echo htmlspecialchars($t['FirstName'].' '.$t['LastName']); ?></td>
-        <td><?php echo htmlspecialchars($t['Email']); ?></td>
-        <td><?php echo htmlspecialchars($t['PhoneNumber'] ?? $t['Phone'] ?? ''); ?></td>
-      </tr>
-    <?php endforeach; ?>
-    </table>
-  <?php } ?>
+  <div class="container-fluid">
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div id="sidebar" class="col-2 bg-dark text-white p-3">
+        <ul class="nav flex-column">
+          <li class="nav-item"><a href="#" class="nav-link text-white" data-page="apartments.php">Apartments</a></li>
+          <li class="nav-item"><a href="#" class="nav-link text-white" data-page="applicants.php">Apartment Applicants</a></li>
+          <li class="nav-item"><a href="#" class="nav-link text-white" data-page="tenants.php">Tenants</a></li>
+          <li class="nav-item"><a href="#" class="nav-link text-white" data-page="lease.php">Create Lease</a></li>
+          <li class="nav-item"><a href="#" class="nav-link text-white" data-page="payments.php">Payments</a></li>
+          <li class="nav-item"><a href="#" class="nav-link text-white" data-page="parking.php">Parking</a></li>
+        </ul>
+      </div>
 
-  <p><a href="lease.php">Create Lease</a> | <a href="payment.php">Record Payment</a> | <a href="parking.php">Assign Parking</a></p>
-  <p><a href="index.php">Home</a></p>
+      <!-- Content area -->
+      <div id="content-area" class="col-10">
+        <h4>Please select an option from the sidebar</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS + jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- AJAX Loader -->
+  <script>
+    $(document).ready(function(){
+      $(".nav-link").click(function(e){
+        e.preventDefault();
+        $(".nav-link").removeClass("active");
+        $(this).addClass("active");
+
+        var page = $(this).data("page");
+        $("#content-area").html("<p>Loading...</p>");
+        $.get(page, function(data){
+          $("#content-area").html(data);
+        });
+      });
+    });
+  </script>
+
 </body>
 </html>

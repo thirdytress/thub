@@ -1,106 +1,71 @@
-
 <?php
 session_start();
 ?>
+
 <!doctype html>
+
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Apartment Hub</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0; padding: 0;
-    }
-    body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f6f9;
-      color: #333;
-      line-height: 1.6;
-    }
-    header {
-      background: #2c3e50;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-      border-radius: 0 0 12px 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    }
-    header h1 {
-      font-size: 2.2rem;
-      margin-bottom: 5px;
-    }
-    nav {
-      margin-top: 10px;
-    }
-    nav a {
-      display: inline-block;
-      margin: 0 8px;
-      padding: 8px 15px;
-      text-decoration: none;
-      background: #3498db;
-      color: #fff;
-      border-radius: 6px;
-      transition: background 0.3s ease;
-    }
-    nav a:hover {
-      background: #1d6fa5;
-    }
-    main {
-      max-width: 900px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    }
-    main h3 {
-      margin-bottom: 12px;
-      color: #2c3e50;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #777;
-      font-size: 0.9rem;
-    }
-  </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-  <header>
-    <h1>🏢 Apartment Hub</h1>
-    <?php if(isset($_SESSION['tenant'])): ?>
-      <nav>
-        <span>Hello, <?php echo htmlspecialchars($_SESSION['tenant']['FirstName']); ?></span>
-        <a href="tenant_dashboard.php">Dashboard</a>
-        <a href="logout.php">Logout</a>
-      </nav>
-    <?php elseif(isset($_SESSION['owner'])): ?>
-      <nav>
-        <span>Hello Owner, <?php echo htmlspecialchars($_SESSION['owner']['FirstName']); ?></span>
-        <a href="owner_dashboard.php">Owner Dashboard</a>
-        <a href="logout.php">Logout</a>
-      </nav>
-    <?php else: ?>
-      <nav>
-        <a href="register.php">Tenant Register</a>
-        <a href="login.php">Login</a>
-        <a href="apartment.php" class="btn">View Apartments</a>
-      </nav>
-    <?php endif; ?>
+<body class="bg-light">
+
+  <!-- Header -->
+
+  <header class="bg-dark text-white py-4 mb-4">
+    <div class="container text-center">
+      <h1 class="mb-0">Apartment Hub</h1>
+    </div>
   </header>
 
-  <main>
-    <h3>About</h3>
+  <!-- Navigation -->
+
+  <nav class="mb-4">
+    <div class="container text-center">
+      <?php if(isset($_SESSION['tenant'])): ?>
+        <span class="me-2">Hello, <?php echo htmlspecialchars($_SESSION['tenant']['FirstName']); ?></span>
+        <a href="dashboard.php" class="btn btn-primary btn-sm">Dashboard</a>
+        <a href="logout.php" class="btn btn-danger btn-sm ms-2">Logout</a>
+      <?php elseif(isset($_SESSION['owner'])): ?>
+        <span class="me-2">Hello Owner, <?php echo htmlspecialchars($_SESSION['owner']['FirstName']); ?></span>
+        <a href="owner_dashboard.php" class="btn btn-primary btn-sm">Owner Dashboard</a>
+        <a href="logout.php" class="btn btn-danger btn-sm ms-2">Logout</a>
+      <?php else: ?>
+        <a href="register.php" class="btn btn-primary btn-sm">Tenant Register</a>
+        <a href="login.php" class="btn btn-secondary btn-sm ms-2">Login</a>
+        <a href="apartment.php" class="btn btn-success btn-sm ms-2">View Apartments</a>
+      <?php endif; ?>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+
+  <section class="py-5 bg-primary text-white text-center mb-4">
+    <div class="container">
+      <h2 class="fw-bold">Find Your Next Home Easily</h2>
+      <p class="lead mb-0">Manage tenants, owners, leases, and utilities in one simple system.</p>
+    </div>
+  </section>
+
+  <!-- Main -->
+
+  <main class="container bg-white p-4 rounded shadow-sm">
+    <h3 class="mb-3">About</h3>
     <p>
       Welcome to <strong>Apartment Hub</strong> — a simple apartment management demo system.  
-      You can manage tenants, owners, leases, and utilities with ease.  
+      You can manage tenants, owners, leases, and utilities with ease.
     </p>
   </main>
 
-  <footer>
+  <!-- Footer -->
+
+  <footer class="text-center py-3 mt-4 text-muted">
     &copy; <?php echo date("Y"); ?> Apartment Hub. All Rights Reserved.
   </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
-

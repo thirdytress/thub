@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 include 'classes/database.php';
@@ -21,79 +20,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Invalid email or password.";
     }
 }
-
 ?>
+
 <!doctype html>
+
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Login - Apartment Hub</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif; 
-      background: #f4f6f9; 
-      display:flex; 
-      justify-content:center; 
-      align-items:center; 
-      height:100vh;
-    }
-    .login-box {
-      background:#fff; 
-      padding:25px; 
-      border-radius:10px; 
-      box-shadow:0 4px 8px rgba(0,0,0,0.1); 
-      width:320px;
-    }
-    h2 {
-      margin-bottom:15px; 
-      color:#2c3e50;
-    }
-    label {
-      display:block; 
-      margin-top:10px; 
-      font-weight:bold;
-    }
-    input, select {
-      width:100%; 
-      padding:10px; 
-      margin-top:5px; 
-      border:1px solid #ccc; 
-      border-radius:6px;
-    }
-    button {
-      margin-top:15px; 
-      padding:10px; 
-      width:100%; 
-      border:none; 
-      background:#3498db; 
-      color:#fff; 
-      border-radius:6px; 
-      cursor:pointer;
-    }
-    button:hover { background:#1d6fa5; }
-    .error { color:red; margin-top:10px; }
-  </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-  <div class="login-box">
-    <h2>Login</h2>
-    <form method="POST">
-      <label for="role">Login as:</label>
-      <select name="role" required>
-        <option value="tenant">Tenant</option>
-        <option value="owner">Owner</option>
-      </select>
+<body class="bg-light d-flex align-items-center" style="min-height:100vh;">
 
-      <label for="email">Email:</label>
-      <input type="email" name="email" required>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5 col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <h2 class="text-center mb-4">Login</h2>
 
-      <label for="password">Password:</label>
-      <input type="password" name="password" required>
 
-      <button type="submit">Login</button>
-    </form>
-    <?php if($error): ?><p class="error"><?= $error ?></p><?php endif; ?>
+        <?php if($error): ?>
+          <div class="alert alert-danger py-2 text-center"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+
+        <form method="POST">
+          <div class="mb-3">
+            <label for="role" class="form-label">Login as</label>
+            <select class="form-select" name="role" id="role" required>
+              <option value="tenant">Tenant</option>
+              <option value="owner">Owner</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+
+        <div class="text-center mt-3">
+          <a href="index.php">Home</a> | <a href="register.php">Tenant Register</a>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
+```
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
-

@@ -150,5 +150,121 @@ public function getAllApartments() {
         $stmt->bindParam(":status", $status);
         return $stmt->execute();
     }
+
+public function getApartmentById($id){
+    $pdo = $this->connect();
+    $stmt = $pdo->prepare("SELECT * FROM apartments WHERE ApartmentID = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+public function applyForApartment($apartmentID, $tenantName, $contact, $employment, $income){
+    $pdo = $this->connect();
+    $stmt = $pdo->prepare("INSERT INTO applications 
+        (ApartmentID, TenantName, Contact, Employment, Income, Status) 
+        VALUES (?,?,?,?,?, 'Pending')");
+    return $stmt->execute([$apartmentID, $tenantName, $contact, $employment, $income]);
+}
+
+
+public function getAllApplications() {
+    $pdo = $this->connect();
+
+    $sql = "SELECT 
+                a.ApplicationID,
+                a.TenantID,
+                a.CurrentAddress,
+                a.MonthlyRent,
+                a.ReasonForMoving,
+                a.Employer,
+                a.Position,
+                a.Income,
+                a.Evicted,
+                a.EvictedExplain,
+                a.BrokenLease,
+                a.LeaseExplain,
+                a.Status,
+                a.AppliedAt,
+                ap.BuildingName,
+                ap.UnitNumber,
+                t.FirstName,
+                t.LastName,
+                t.PhoneNumber
+            FROM applications a
+            LEFT JOIN tenants t ON a.TenantID = t.TenantID
+            JOIN apartments ap ON a.ApartmentID = ap.ApartmentID
+            ORDER BY a.AppliedAt DESC";
+
+    $stmt = $pdo->query($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+
+
+
+
+public function getTenantApplications($tenantId) {
+    $stmt = $this->conn->prepare("SELECT a.*, ap.BuildingName, ap.UnitNumber 
+        FROM applications a
+        JOIN apartments ap ON a.ApartmentID = ap.ApartmentID
+        WHERE a.TenantID = ?");
+    $stmt->execute([$tenantId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+public function updateApplicationStatus($id, $status) {
+    $pdo = $this->connect();   // <--- same here
+    $stmt = $pdo->prepare("UPDATE applications SET Status = ? WHERE ApplicationID = ?");
+    return $stmt->execute([$status, $id]);
+}
+
+public function submitApplication(
+    $tenantId, 
+    $apartmentId, 
+    $currentAddress, 
+    $monthlyRent, 
+    $reasonMoving, 
+    $employer, 
+    $position, 
+    $income, 
+    $evicted, 
+    $evictedExplain, 
+    $brokenLease, 
+    $leaseExplain
+) {
+    $pdo = $this->connect();
+
+    // Prepare SQL
+    $sql = "INSERT INTO applications 
+        (TenantID, ApartmentID, CurrentAddress, MonthlyRent, ReasonForMoving, Employer, Position, Income, Evicted, EvictedExplain, BrokenLease, LeaseExplain, Status) 
+        VALUES (:tenant, :apartment, :current_address, :monthly_rent, :reason_moving, :employer, :position, :income, :evicted, :evicted_explain, :broken_lease, :lease_explain, 'Pending')";
+
+    $stmt = $pdo->prepare($sql);
+
+    // If guest, TenantID will be NULL
+    $tenantId = $tenantId ?? null;
+
+    // Bind parameters
+    $stmt->bindParam(':tenant', $tenantId);
+    $stmt->bindParam(':apartment', $apartmentId);
+    $stmt->bindParam(':current_address', $currentAddress);
+    $stmt->bindParam(':monthly_rent', $monthlyRent);
+    $stmt->bindParam(':reason_moving', $reasonMoving);
+    $stmt->bindParam(':employer', $employer);
+    $stmt->bindParam(':position', $position);
+    $stmt->bindParam(':income', $income);
+    $stmt->bindParam(':evicted', $evicted);
+    $stmt->bindParam(':evicted_explain', $evictedExplain);
+    $stmt->bindParam(':broken_lease', $brokenLease);
+    $stmt->bindParam(':lease_explain', $leaseExplain);
+
+    return $stmt->execute();
+}
+
+
+
+
 }
 ?>

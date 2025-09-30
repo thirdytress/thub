@@ -45,5 +45,5 @@ $apartments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <label>Description<br><textarea name="description" required></textarea></label><br>
     <button type="submit">Submit Request</button>
   </form>
-  <p><a href="tenant_dashboard.php">Back</a></p>
+  <p><a href="dashboard.php">Back</a></p>
 </body></html>

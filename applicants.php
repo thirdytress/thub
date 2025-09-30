@@ -59,24 +59,38 @@ $applicants = $db->getAllApplications();
                     <tr>
                         <!-- Tenant Name -->
                         <td>
-                            <?php
-                            if (!empty($app['FirstName']) || !empty($app['LastName'])) {
-                                echo htmlspecialchars($app['FirstName'] . ' ' . $app['LastName']);
-                            } else {
-                                echo 'Guest';
-                            }
-                            ?>
+                            <?= htmlspecialchars(
+                                !empty($app['FirstName']) || !empty($app['LastName']) 
+                                    ? $app['FirstName'] . ' ' . $app['LastName'] 
+                                    : ($app['TenantName'] ?? 'Guest')
+                            ) ?>
                         </td>
 
                         <!-- Contact -->
-                        <td><?= htmlspecialchars($app['PhoneNumber'] ?? 'N/A') ?></td>
+                        <td>
+                            <?= htmlspecialchars(
+                                $app['PhoneNumber'] ?? ($app['Contact'] ?? 'N/A')
+                            ) ?>
+                        </td>
 
-                        <!-- Employment and Income -->
-                        <td><?= htmlspecialchars($app['Employment']) ?></td>
-                        <td><?= htmlspecialchars($app['Income']) ?></td>
+                        <!-- Employment -->
+                        <td>
+                            <?= htmlspecialchars(
+                                ($app['Employer'] ?? 'N/A') . ' - ' . ($app['Position'] ?? 'N/A')
+                            ) ?>
+                        </td>
+
+                        <!-- Income -->
+                        <td>
+                            <?= htmlspecialchars($app['Income'] ?? 'N/A') ?>
+                        </td>
 
                         <!-- Apartment -->
-                        <td><?= htmlspecialchars($app['BuildingName'] . " - Unit " . $app['UnitNumber']) ?></td>
+                        <td>
+                            <?= htmlspecialchars(
+                                ($app['BuildingName'] ?? 'N/A') . ' - Unit ' . ($app['UnitNumber'] ?? 'N/A')
+                            ) ?>
+                        </td>
 
                         <!-- Status -->
                         <td>
@@ -87,11 +101,13 @@ $applicants = $db->getAllApplications();
                         </td>
 
                         <!-- Applied At -->
-                        <td><?= date('M d, Y H:i', strtotime($app['AppliedAt'])) ?></td>
+                        <td>
+                            <?= date('M d, Y H:i', strtotime($app['AppliedAt'] ?? $app['CreatedAt'] ?? date('Y-m-d H:i:s'))) ?>
+                        </td>
 
                         <!-- Action -->
                         <td>
-                            <?php if ($app['Status'] === "Pending"): ?>
+                            <?php if (($app['Status'] ?? '') === "Pending"): ?>
                                 <form method="post" class="d-flex gap-1">
                                     <input type="hidden" name="id" value="<?= $app['ApplicationID'] ?>">
                                     <button type="submit" name="action" value="Approved" class="btn btn-sm btn-success">Approve</button>

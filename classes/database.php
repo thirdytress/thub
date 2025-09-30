@@ -184,7 +184,6 @@ public function getAllApplications() {
                 a.BrokenLease,
                 a.LeaseExplain,
                 a.Status,
-                a.AppliedAt,
                 ap.BuildingName,
                 ap.UnitNumber,
                 t.FirstName,
@@ -193,11 +192,13 @@ public function getAllApplications() {
             FROM applications a
             LEFT JOIN tenants t ON a.TenantID = t.TenantID
             JOIN apartments ap ON a.ApartmentID = ap.ApartmentID
-            ORDER BY a.AppliedAt DESC";
+            ORDER BY a.ApplicationID DESC";
 
     $stmt = $pdo->query($sql);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+
 
 
 
